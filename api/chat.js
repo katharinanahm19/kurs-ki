@@ -1,6 +1,5 @@
 export default async function handler(req, res) {
-  // CORS – erlaube Anfragen von deiner WordPress-Website
-  res.setHeader('Access-Control-Allow-Origin', 'https://katharina-nahm.de');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
