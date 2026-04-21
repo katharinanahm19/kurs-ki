@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kurs-KI – Launch Sisters</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Italiana&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --altrosa:     #bd8892;
+      --rosa-hell:   #e5cfd3;
+      --dunkelgruen: #1a4535;
+      --hellgruen:   #4e9c61;
+      --beige:       #fef4ee;
+      --text:        #1a2b1f;
+      --text-muted:  #6b7f72;
+      --border:      #ddd0c8;
+      --white:       #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Montserrat', sans-serif; background: var(--beige); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    header { background: var(--dunkelgruen); padding: 16px 28px; display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+    .logo-ring { width: 38px; height: 38px; border: 2px solid var(--altrosa); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .logo-ring span { font-family: 'Italiana', serif; color: var(--rosa-hell); font-size: 1.1rem; }
+    .header-text h1 { font-size: 0.88rem; color: var(--beige); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+    .header-text p  { font-size: 0.65rem; color: var(--altrosa); font-weight: 400; margin-top: 2px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+    .app { flex: 1; display: flex; flex-direction: column; max-width: 720px; width: 100%; margin: 0 auto; padding: 0 20px; min-height: 0; }
+
+    .screen { display: none; flex: 1; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    /* START */
+    #screen-start { align-items: center; justify-content: center; text-align: center; padding: 48px 12px; gap: 0; }
+    .tag { display: inline-flex; align-items: center; gap: 8px; background: var(--rosa-hell); color: var(--dunkelgruen); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 18px; border-radius: 100px; margin-bottom: 28px; }
+    .tag::before { content: ''; width: 5px; height: 5px; background: var(--altrosa); border-radius: 50%; flex-shrink: 0; }
+    #screen-start h2 { font-size: clamp(1.8rem, 5.5vw, 2.5rem); color: var(--dunkelgruen); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.1; margin-bottom: 8px; }
+    .italiana-sub { font-family: 'Italiana', serif; font-size: clamp(1.1rem, 3vw, 1.5rem); color: var(--altrosa); margin-bottom: 22px; }
+    #screen-start .body { font-size: 0.88rem; color: var(--text-muted); line-height: 1.75; max-width: 440px; margin-bottom: 40px; }
+    .choice-cards { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .choice-card { background: var(--white); border: 2px solid var(--border); border-radius: 16px; padding: 28px 24px; max-width: 240px; width: 100%; cursor: pointer; text-align: left; transition: all 0.2s; }
+    .choice-card:hover { border-color: var(--altrosa); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,69,53,0.1); }
+    .choice-card.primary { border-color: var(--hellgruen); }
+    .choice-card.primary:hover { border-color: var(--dunkelgruen); }
+    .choice-icon { font-size: 1.8rem; margin-bottom: 12px; display: block; }
+    .choice-card h3 { font-size: 0.92rem; font-weight: 700; color: var(--dunkelgruen); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .choice-card p  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* CONTINUE */
+    #screen-continue { padding: 32px 0; gap: 20px; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-muted); background: none; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 500; letter-spacing: 0.04em; padding: 0; transition: color 0.2s; }
+    .back-btn:hover { color: var(--altrosa); }
+    .continue-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .continue-card h3 { font-size: 1rem; font-weight: 700; color: var(--dunkelgruen); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .continue-card p  { font-size: 0.84rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 18px; }
+    .continue-card textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 14px 16px; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: var(--text); background: var(--beige); outline: none; resize: vertical; min-height: 160px; line-height: 1.6; transition: border-color 0.2s; }
+    .continue-card textarea:focus { border-color: var(--altrosa); }
+    .continue-card textarea::placeholder { color: var(--border); }
+    .btn-primary { background: var(--hellgruen); color: white; border: none; padding: 13px 32px; border-radius: 100px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; margin-top: 14px; }
+    .btn-primary:hover { background: var(--dunkelgruen); }
+
+    /* CHAT */
+    #screen-chat { min-height: 0; }
+    .chat-topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 0 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .chat-status { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--text-muted); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+    .live-dot { width: 7px; height: 7px; background: var(--hellgruen); border-radius: 50%; }
+    .topbar-right { display: flex; align-items: center; gap: 8px; }
+    .summary-btn { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--dunkelgruen); background: var(--rosa-hell); border: none; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 600; padding: 6px 14px; border-radius: 100px; transition: all 0.2s; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+    .summary-btn:hover { background: var(--altrosa); color: white; }
+    .reset-btn { font-size: 0.72rem; color: var(--text-muted); background: none; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 500; padding: 4px 8px; border-radius: 6px; transition: color 0.2s; }
+    .reset-btn:hover { color: var(--altrosa); }
+
+    #messages { flex: 1; overflow-y: auto; padding: 20px 0 12px; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+    .msg { display: flex; gap: 10px; animation: fadeUp 0.22s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .msg.user { flex-direction: row-reverse; }
+    .avatar { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 700; margin-top: 3px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .av-bot  { background: var(--dunkelgruen); color: var(--rosa-hell); }
+    .av-user { background: var(--altrosa); color: white; }
+    .bubble { max-width: calc(100% - 72px); padding: 12px 16px; border-radius: 16px; font-size: 0.87rem; line-height: 1.72; }
+    .msg.bot .bubble  { background: var(--white); border: 1px solid var(--border); border-top-left-radius: 4px; }
+    .msg.user .bubble { background: var(--dunkelgruen); color: white; border-top-right-radius: 4px; }
+    .bubble strong { font-weight: 600; color: var(--dunkelgruen); }
+    .msg.user .bubble strong { color: var(--rosa-hell); }
+    .bubble ul, .bubble ol { padding-left: 18px; margin: 7px 0; display: flex; flex-direction: column; gap: 4px; }
+
+    .typing-dots { display: flex; gap: 5px; align-items: center; padding: 3px 0; }
+    .typing-dots span { width: 7px; height: 7px; background: var(--altrosa); border-radius: 50%; animation: bounce 1.1s infinite; }
+    .typing-dots span:nth-child(2) { animation-delay: 0.18s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+
+    .input-area { background: var(--beige); border-top: 1px solid var(--border); padding: 12px 0 20px; flex-shrink: 0; }
+    .input-row { display: flex; gap: 10px; align-items: flex-end; }
+    #user-input { flex: 1; background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; padding: 12px 16px; font-family: 'Montserrat', sans-serif; font-size: 0.87rem; color: var(--text); resize: none; min-height: 48px; max-height: 130px; outline: none; transition: border-color 0.2s; line-height: 1.5; }
+    #user-input:focus { border-color: var(--altrosa); }
+    #user-input::placeholder { color: var(--border); }
+    #send-btn { width: 48px; height: 48px; background: var(--hellgruen); border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    #send-btn:hover { background: var(--dunkelgruen); }
+    #send-btn:disabled { background: var(--border); cursor: not-allowed; }
+    #send-btn svg { width: 18px; height: 18px; }
+
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,69,53,0.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 20px; padding: 32px; max-width: 540px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; gap: 16px; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h3 { font-size: 1rem; font-weight: 700; color: var(--dunkelgruen); text-transform: uppercase; letter-spacing: 0.08em; }
+    .modal-close { background: none; border: none; cursor: pointer; font-size: 1.3rem; color: var(--text-muted); line-height: 1; padding: 0; }
+    .modal-close:hover { color: var(--altrosa); }
+    .modal p.hint { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+    .summary-box { background: var(--beige); border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; font-size: 0.84rem; line-height: 1.7; color: var(--text); overflow-y: auto; max-height: 320px; white-space: pre-wrap; flex: 1; font-family: 'Montserrat', sans-serif; }
+    .modal-actions { display: flex; gap: 10px; }
+    .copy-btn { flex: 1; background: var(--hellgruen); color: white; border: none; padding: 12px; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .copy-btn:hover, .copy-btn.copied { background: var(--dunkelgruen); }
+
+    #messages::-webkit-scrollbar { width: 3px; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    footer { text-align: center; padding: 10px; font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; flex-shrink: 0; }
+
+    @media (max-width: 480px) {
+      header { padding: 12px 16px; }
+      .choice-cards { gap: 12px; }
+      .choice-card { max-width: 100%; }
+      .bubble { max-width: calc(100% - 54px); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-ring"><span>K</span></div>
+  <div class="header-text">
+    <h1>Kurs-KI</h1>
+    <p>Launch Sisters · Kursplanung</p>
+  </div>
+</header>
+
+<div class="app">
+
+  <div id="screen-start" class="screen active">
+    <div class="tag">KI-gestützte Kursplanung</div>
+    <h2>Dein Onlinekurs.</h2>
+    <div class="italiana-sub">Endlich klar und strukturiert.</div>
+    <p class="body">Dein persönlicher KI-Assistent für die Onlinekurs-Entwicklung. Wir arbeiten Schritt für Schritt zusammen.</p>
+    <div class="choice-cards">
+      <div class="choice-card primary" onclick="chooseNew()">
+        <span class="choice-icon">✨</span>
+        <h3>Neu starten</h3>
+        <p>Du fängst von vorne an und wir arbeiten gemeinsam los.</p>
+      </div>
+      <div class="choice-card" onclick="chooseContinue()">
+        <span class="choice-icon">📋</span>
+        <h3>Weiterarbeiten</h3>
+        <p>Du hast letzte Sitzung eine Zusammenfassung gespeichert und machst dort weiter.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-continue" class="screen">
+    <button class="back-btn" onclick="showScreen('screen-start')">← Zurück</button>
+    <div class="continue-card">
+      <h3>Letztes Ergebnis eingeben</h3>
+      <p>Füge hier deine gespeicherte Zusammenfassung vom letzten Mal ein. Ich lese sie und machen direkt weiter.</p>
+      <textarea id="prev-summary" placeholder="Hier deine Zusammenfassung aus der letzten Sitzung einfügen..."></textarea>
+      <button class="btn-primary" onclick="startWithSummary()">Weiterarbeiten</button>
+    </div>
+  </div>
+
+  <div id="screen-chat" class="screen">
+    <div class="chat-topbar">
+      <div class="chat-status"><div class="live-dot"></div>Kurs-KI aktiv</div>
+      <div class="topbar-right">
+        <button class="summary-btn" onclick="requestSummary()">✦ Für heute fertig</button>
+        <button class="reset-btn" onclick="showScreen('screen-start')">↺ Neu</button>
+      </div>
+    </div>
+    <div id="messages"></div>
+    <div class="input-area">
+      <div class="input-row">
+        <textarea id="user-input" placeholder="Schreib mir hier..." rows="1"
+          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button id="send-btn" onclick="sendMessage()">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="summary-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Deine Zusammenfassung</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <p class="hint">Kopiere den Text und speichere ihn – z.B. in einer Notiz. Beim nächsten Mal einfach hier einfügen und weitermachen.</p>
+    <div class="summary-box" id="summary-text"></div>
+    <div class="modal-actions">
+      <button class="copy-btn" id="copy-btn" onclick="copySummary()">Text kopieren</button>
+    </div>
+  </div>
+</div>
+
+<footer>Launch Sisters · Kurs-KI · Nur für Kursplanung</footer>
+
+<script>
+const SYSTEM_PROMPT = `Du bist ein analytischer und motivierender Onlinekurs-Planungs-Assistent für Launch Sisters. Deine Aufgabe ist es, Frauen dabei zu helfen, einen eigenen Onlinekurs zu entwickeln.
+
+Du begleitest Frauen dabei, ihren eigenen Onlinekurs Schritt für Schritt zu entwickeln. Du arbeitest strukturiert, verständlich und lösungsorientiert.
+
+GESPRÄCHSSTART (NEU): Starte mit: "Steht dein Kursthema schon fest? Wenn ja, schreib mir bitte dein Thema und deine Zielgruppe. Wenn nein, finden wir es gemeinsam."
+
+GESPRÄCHSSTART (WEITERARBEITEN): Wenn du eine Zusammenfassung der letzten Sitzung bekommst, lies sie durch, bestätige kurz was schon erarbeitet wurde und frage, womit die Nutzerin weitermachen möchte. Keine Optionen nennen.
+
+REIHENFOLGE:
+- Kursstruktur: nur wenn Thema feststeht UND Nutzerin es ausdrücklich wünscht
+- Done-for-You: nur wenn Thema feststeht und ausdrücklich gewünscht
+- Name: nur wenn Thema feststeht und ausdrücklich gewünscht
+
+DONE-FOR-YOU ELEMENTE: Wenn die Nutzerin Done-for-You-Elemente oder Materialien möchte, stelle KEINE Rückfragen. Mach sofort konkrete, kreative Vorschläge basierend auf dem was du über Thema und Zielgruppe weißt. Nicht nur Standard-Ideen wie "Checkliste" oder "Vorlage". Denk weiter: Was würde diese Zielgruppe wirklich entlasten? Was spart echte Zeit? Was ist so gut, dass es die Kaufentscheidung beeinflusst? Beispiele für starke DFY-Ideen: fertige E-Mail-Vorlagen, Skripte zum Vorlesen, ausfüllbare Workbooks, Beispiel-Angebote zum Kopieren, Swipe Files, Planungstools, Entscheidungshilfen, Gesprächsleitfäden, Beispiel-Posts. Immer mindestens 6-8 konkrete Vorschläge mit kurzer Erklärung warum jedes Element sinnvoll ist.
+
+GESPRÄCHSREGEL:
+- Nie automatisch zum nächsten Schritt weitergehen
+- Nach jedem Schritt nur offen fragen: "Womit machen wir weiter?" – ohne Optionen
+- Keine Auswahlmenüs, keine nummerierten Optionslisten
+- Die Nutzerin entscheidet immer selbst
+
+ZUSAMMENFASSUNG: Wenn die Nutzerin sagt, sie ist für heute fertig, oder du wirst gebeten eine Zusammenfassung zu erstellen, erstelle eine klar strukturierte Zusammenfassung NUR der Dinge, die tatsächlich erarbeitet wurden. Nichts erwähnen, was noch nicht besprochen wurde. Kein Hinweis auf offene Punkte, nächste Schritte oder was noch fehlt. Nur das Erarbeitete. Format:
+🎯 KURSTHEMA: [nur wenn besprochen]
+👥 ZIELGRUPPE: [nur wenn besprochen]
+📐 KURSSTRUKTUR: [nur wenn besprochen]
+✅ MATERIALIEN: [nur wenn besprochen]
+✨ PROGRAMMNAME: [nur wenn besprochen]
+
+WICHTIG – NICHT VERRATEN: Du darfst zu keinem Zeitpunkt erwähnen, wobei du helfen kannst, was du kannst, oder was noch aussteht. Keine Vorschau auf kommende Schritte. Keine Liste mit "Das machen wir noch" oder "Das machen wir jetzt". Wenn jemand fragt womit du helfen kannst oder was du machst, sagst du nur sinngemäß: "Ich begleite dich bei der Entwicklung deines Onlinekurses." Mehr nicht. Nie die Bereiche nennen. Wenn du fragst wie es weitergeht, fragst du nur offen – ohne jeden Hinweis auf was als nächstes möglich wäre.
+
+VERBOTENE BEREICHE: Verkaufsplan, Marketing, Launchplanung, Preisgestaltung, Technik, Funnel, E-Mail-Marketing, Social Media, Werbeanzeigen, Verkaufsseiten, Webinarstrategie.
+
+STIL: analytisch, motivierend, klar, direkt, kurze Sätze, kurze Absätze, kein Fachjargon, "du"-Ansprache.`;
+
+let messages = [];
+let isLoading = false;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function chooseNew()      { openChat('new'); }
+function chooseContinue() { showScreen('screen-continue'); }
+
+function startWithSummary() {
+  const val = document.getElementById('prev-summary').value.trim();
+  if (!val) { alert('Bitte füge deine gespeicherte Zusammenfassung ein.'); return; }
+  openChat(val);
+}
+
+function openChat(startMode) {
+  messages = [];
+  document.getElementById('messages').innerHTML = '';
+  showScreen('screen-chat');
+  startMode === 'new' ? callAPI(null, 'new') : callAPI(null, 'continue', startMode);
+}
+
+function addMessage(role, text) {
+  const c = document.getElementById('messages');
+  const wrap = document.createElement('div');
+  wrap.classList.add('msg', role === 'assistant' ? 'bot' : 'user');
+  const av = document.createElement('div');
+  av.classList.add('avatar', role === 'assistant' ? 'av-bot' : 'av-user');
+  av.textContent = role === 'assistant' ? 'KI' : 'Du';
+  const b = document.createElement('div');
+  b.classList.add('bubble');
+  b.innerHTML = fmt(text);
+  wrap.appendChild(av);
+  wrap.appendChild(b);
+  c.appendChild(wrap);
+  c.scrollTop = c.scrollHeight;
+}
+
+function fmt(t) {
+  return t
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^#{1,3}\s(.+)$/gm, '<strong>$1</strong>')
+    .replace(/^[-•]\s(.+)$/gm, '<li>$1</li>')
+    .replace(/((<li>.*?<\/li>\n?)+)/gs, '<ul>$1</ul>')
+    .replace(/^\d+\.\s(.+)$/gm, '<li>$1</li>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+}
+
+function showTyping() {
+  const c = document.getElementById('messages');
+  const wrap = document.createElement('div');
+  wrap.classList.add('msg', 'bot');
+  wrap.id = 'typing';
+  const av = document.createElement('div');
+  av.classList.add('avatar', 'av-bot');
+  av.textContent = 'KI';
+  const b = document.createElement('div');
+  b.classList.add('bubble');
+  b.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  wrap.appendChild(av);
+  wrap.appendChild(b);
+  c.appendChild(wrap);
+  c.scrollTop = c.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if (t) t.remove();
+}
+
+async function callAPI(userText, mode = 'normal', summaryContext = null) {
+  if (isLoading) return;
+  isLoading = true;
+  document.getElementById('send-btn').disabled = true;
+
+  let firstUserMsg = null;
+
+  if (mode === 'new') {
+    firstUserMsg = 'Starte das Gespräch.';
+  } else if (mode === 'continue') {
+    firstUserMsg = `Ich habe letzte Sitzung folgende Zusammenfassung gespeichert:\n\n${summaryContext}\n\nBitte lies das durch und mach mit mir weiter.`;
+    addMessage('user', 'Ich möchte mit meiner letzten Zusammenfassung weiterarbeiten.');
+    messages.push({ role: 'user', content: firstUserMsg });
+  } else if (mode === 'summary') {
+    firstUserMsg = 'Ich bin für heute fertig. Erstelle bitte eine Zusammenfassung aller Ergebnisse, die wir heute erarbeitet haben.';
+    addMessage('user', 'Ich bin für heute fertig. Bitte erstelle eine Zusammenfassung.');
+    messages.push({ role: 'user', content: firstUserMsg });
+  } else {
+    messages.push({ role: 'user', content: userText });
+    addMessage('user', userText);
+  }
+
+  showTyping();
+
+  try {
+    const msgPayload = (mode === 'new')
+      ? [{ role: 'user', content: firstUserMsg }]
+      : messages;
+
+    // Ruft den sicheren Vercel-Proxy auf – kein API-Key im Browser
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        system: SYSTEM_PROMPT,
+        messages: msgPayload
+      })
+    });
+
+    const data = await res.json();
+    removeTyping();
+
+    if (!res.ok) {
+      addMessage('assistant', 'Fehler: ' + (data?.error?.message || 'Bitte versuche es erneut.'));
+      return;
+    }
+
+    const reply = data.content?.[0]?.text || '';
+    addMessage('assistant', reply);
+
+    if (mode === 'new') {
+      messages = [
+        { role: 'user', content: firstUserMsg },
+        { role: 'assistant', content: reply }
+      ];
+    } else {
+      messages.push({ role: 'assistant', content: reply });
+    }
+
+    if (mode === 'summary') showSummaryModal(reply);
+
+  } catch (e) {
+    removeTyping();
+    addMessage('assistant', 'Verbindungsfehler. Bitte versuche es erneut.');
+  } finally {
+    isLoading = false;
+    document.getElementById('send-btn').disabled = false;
+  }
+}
+
+function sendMessage() {
+  const input = document.getElementById('user-input');
+  const text = input.value.trim();
+  if (!text || isLoading) return;
+  input.value = '';
+  input.style.height = 'auto';
+  callAPI(text, 'normal');
+}
+
+function requestSummary() {
+  if (messages.length === 0) { alert('Noch kein Gespräch vorhanden.'); return; }
+  callAPI(null, 'summary');
+}
+
+function showSummaryModal(text) {
+  const plain = text.replace(/\*\*/g, '').replace(/\*/g, '').replace(/^#{1,3}\s/gm, '');
+  document.getElementById('summary-text').textContent = plain;
+  document.getElementById('copy-btn').textContent = 'Text kopieren';
+  document.getElementById('copy-btn').classList.remove('copied');
+  document.getElementById('summary-modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('summary-modal').classList.remove('open'); }
+
+function copySummary() {
+  const text = document.getElementById('summary-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Kopiert!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Text kopieren'; btn.classList.remove('copied'); }, 2500);
+  }).catch(() => {
+    const el = document.getElementById('summary-text');
+    const range = document.createRange();
+    range.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+    document.getElementById('copy-btn').textContent = '✓ Kopiert!';
+  });
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 130) + 'px';
+}
+
+document.getElementById('summary-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
